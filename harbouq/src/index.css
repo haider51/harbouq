@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", serif;
+  
+  --color-primary: #141414;
+  --color-accent: #6366f1;
+}
+
+@layer base {
+  body {
+    @apply bg-[#020617] text-white antialiased selection:bg-accent selection:text-white;
+  }
+}
+
+@layer components {
+  .mesh-gradient {
+    background: radial-gradient(at 0% 0%, #1e293b 0, transparent 50%),
+                radial-gradient(at 100% 0%, #0f172a 0, transparent 50%),
+                radial-gradient(at 100% 100%, #1e1b4b 0, transparent 50%),
+                radial-gradient(at 0% 100%, #0c4a6e 0, transparent 50%);
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+  }
+
+  .glass-interactive {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    @apply transition-all duration-300 hover:bg-white/10 hover:border-white/20;
+  }
+}

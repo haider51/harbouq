@@ -1,0 +1,90 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Connection Test
+    match /test/connection {
+      allow get: if isSignedIn();
+    }
+
+    // User Profile
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) 
+        && isVerified()
+        && incoming().name is string && incoming().name.size() > 0
+        && incoming().projectName is string
+        && (incoming().createdAt == request.time || incoming().createdAt is string); // Allow both for migration
+      allow update: if isOwner(userId)
+        && isVerified()
+        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'projectName', 'projectDescription', 'updatedAt']);
+      
+      // Sub-collections
+      match /products/{productId} {
+        allow list, get: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isVerified() && isValidId(productId);
+        allow delete: if isOwner(userId) && isVerified();
+      }
+
+      match /materials/{materialId} {
+        allow list, get: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isVerified() && isValidId(materialId);
+        allow delete: if isOwner(userId) && isVerified();
+      }
+
+      match /employees/{employeeId} {
+        allow list, get: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isVerified() && isValidId(employeeId);
+        allow delete: if isOwner(userId) && isVerified();
+      }
+
+      match /machines/{machineId} {
+        allow list, get: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isVerified() && isValidId(machineId);
+        allow delete: if isOwner(userId) && isVerified();
+      }
+
+      match /credits/{creditId} {
+        allow list, get: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isVerified() && isValidId(creditId);
+        allow delete: if isOwner(userId) && isVerified();
+      }
+
+      match /history/{logId} {
+        allow list, get: if isOwner(userId);
+        allow create: if isOwner(userId) && isVerified() && isValidId(logId);
+        allow update: if false; // Logs are immutable
+        allow delete: if isOwner(userId) && isVerified();
+      }
+    }
+  }
+}

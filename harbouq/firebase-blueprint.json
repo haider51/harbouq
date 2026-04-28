@@ -1,0 +1,121 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User business information and profile data",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "projectName": { "type": "string" },
+        "projectDescription": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "projectName"]
+    },
+    "Product": {
+      "title": "Product/Service",
+      "description": "Products or services offered by the business",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "rawMaterialCost": { "type": "number" },
+        "manufacturingPrice": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "price"]
+    },
+    "Material": {
+      "title": "Material/Expense",
+      "description": "Materials or services the business pays for",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "cost": { "type": "number" },
+        "quantity": { "type": "number" },
+        "duration": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "cost"]
+    },
+    "Employee": {
+      "title": "Employee",
+      "description": "Staff members and their salaries",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "salary": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "salary"]
+    },
+    "Machine": {
+      "title": "Machine",
+      "description": "Equipment used for manufacturing",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "lastMaintenance": { "type": "string", "format": "date" },
+        "nextMaintenance": { "type": "string", "format": "date" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name"]
+    },
+    "Credit": {
+      "title": "Credit/Debt",
+      "description": "Money owed to suppliers or by customers",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["owed_to_me", "owed_by_me"] },
+        "amount": { "type": "number" },
+        "party": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "amount", "party"]
+    },
+    "LogEntry": {
+      "title": "Transaction Log",
+      "description": "A record of sales, purchases, or other financial actions",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["sale", "purchase", "expense", "other"] },
+        "description": { "type": "string" },
+        "amount": { "type": "number" },
+        "date": { "type": "string", "format": "date-time" },
+        "relatedEntityId": { "type": "string" }
+      },
+      "required": ["type", "amount", "date"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile document"
+    },
+    "/users/{userId}/products/{productId}": {
+      "schema": "Product",
+      "description": "List of products/services"
+    },
+    "/users/{userId}/materials/{materialId}": {
+      "schema": "Material",
+      "description": "List of recurring expenses/materials"
+    },
+    "/users/{userId}/employees/{employeeId}": {
+      "schema": "Employee",
+      "description": "List of employees"
+    },
+    "/users/{userId}/machines/{machineId}": {
+      "schema": "Machine",
+      "description": "List of machines"
+    },
+    "/users/{userId}/credits/{creditId}": {
+      "schema": "Credit",
+      "description": "List of credits and debts"
+    },
+    "/users/{userId}/history/{logId}": {
+      "schema": "LogEntry",
+      "description": "Operation history logger"
+    }
+  }
+}
